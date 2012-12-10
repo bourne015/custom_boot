@@ -1,0 +1,7 @@
+a simple custom bootloader for ok6410
+author: fantao
+2012.12.5
+
+the kernel flashed at 0x100000 in nand, the size is 5M, then we copy it 
+to 0x5e000000(LOAD_ADDR) in ram.
+
