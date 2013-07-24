@@ -14,7 +14,7 @@ _start:
 	/*lowlevel init*/
 	bl	clock_init
 	ldr	sp, =8*1024
-	bl	uart_init
+	#bl	uart_init
 	bl	ddr_init
 	
 	/*copy code to ram*/
