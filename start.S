@@ -12,8 +12,8 @@ _start:
 	str	r1, [r0]
 
 	/*lowlevel init*/
-	ldr	sp, =8*1024
 	bl	clock_init
+	ldr	sp, =8*1024
 	bl	uart_init
 	bl	ddr_init
 	
