@@ -26,7 +26,7 @@ _start:
 	beq	clean_bss
 	
 	bl	nand2ddr
-	bl	test
+#	bl	test
 	cmp	r0, #0
 	beq	error
 
