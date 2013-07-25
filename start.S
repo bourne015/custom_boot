@@ -43,7 +43,7 @@ bss_loop:
 
 after_copy:
 	ldr	lr, =error
-	ldr	pc, =do_bootm_linux
+	ldr	pc, =start_armboot
 
 error:
 	b	error

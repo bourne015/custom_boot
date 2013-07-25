@@ -93,7 +93,7 @@ static void setup_end_tag(void)
         params->hdr.size = 0;
 }
 
-int do_bootm_linux(void)
+int start_armboot(void)
 {
 	char *commandline = CMDLINE;
 	void (*kernel_entry)(int zero, int arch, unsigned int params);
