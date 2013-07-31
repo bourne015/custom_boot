@@ -1,11 +1,11 @@
-objs = start.o ddr.o nand.o boot.o lowlevel_init.o io.o
+objs = start.o ddr.o nand.o boot.o lowlevel_init.o io.o test.o
 CC := arm-linux-gcc
 CFLAGS := -fno-builtin -Wall -nostdlib
 
 boot.bin:$(objs)
 	arm-linux-ld -Tboot.lds -o boot.elf $^
 	arm-linux-objcopy -O binary -S boot.elf $@
-#	$(CC)objdump -D boot.elf > boot.dis
+	arm-linux-objdump -D boot.elf > boot.dis
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c -o $@ $<
