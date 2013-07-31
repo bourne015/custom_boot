@@ -97,6 +97,38 @@ static void setup_end_tag(void)
         params->hdr.size = 0;
 }
 
+#include "s3c6410.h"
+
+static void uart_init(void)
+{
+	unsigned long data;
+	/*set to uart mode*/
+	data = SYSREG_R(GPACON);
+	data &= ~0xff;
+	data |= 0x22;
+	SYSREG_W(GPACON, data);
+
+	/*set the frame*/
+	SYSREG_W(ULCON0, 0x03);
+
+	/*set to interrupt mode and PCLK*/
+	SYSREG_W(UCON0, 0x805);
+
+	/*enable FIFO*/
+	SYSREG_W(UFCON0, 0x01);
+
+	/*don't use ACF*/
+	SYSREG_W(UMCON0, 0x01);
+
+	/*boaud rate
+	DIV_VAL = (PCLK / (bps * 16)) -1
+	= (66500000 / (115200 * 16)) - 1
+	= 35.08
+	*/
+	SYSREG_W(UBRDIV0, 35);
+	SYSREG_W(UDIVSLOT0, 0X1);
+}
+
 int start_armboot(void)
 {
 	char *commandline = CMDLINE;
@@ -104,7 +136,7 @@ int start_armboot(void)
 	volatile unsigned int *p = (volatile unsigned int *)LOAD_ADDR;
 
 	/*copy kernel to ram*/
-//	uart_init();
+	uart_init();
 	puts("copying kernel to ram......");
 	nand_read(0x100000, LOAD_ADDR, LOAD_SIZE);
 	puts("done\n\r");
