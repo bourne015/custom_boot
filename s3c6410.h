@@ -1,8 +1,11 @@
+#define SYSREG_R(reg)		(*(volatile unsigned long *)(reg))
+#define SYSREG_W(reg, val)	(*(volatile unsigned long *)(reg) = val)
+
 /*GPIO ADDRESS for OK6410*/
-#define GPACON  	(*((volatile unsigned long *)0x7f008000))
-#define GPADAT          (*((volatile unsigned long *)0x7f008004))
-#define GPMCON  	(*((volatile unsigned long *)0x7F008820))
-#define GPMDAT 		(*((volatile unsigned long *)0x7F008824))
+#define GPACON  	0x7f008000
+#define GPADAT          0x7f008004
+#define GPMCON  	0x7F008820
+#define GPMDAT 		0x7F008824
 
 /*CLOCK*/
 #define APLL_LOCK       0x7e00f000
@@ -52,30 +55,30 @@
 #define P1T_ESR         (*((volatile unsigned long *)0x7e001048))
 #define P1MEMCFG2       (*((volatile unsigned long *)0x7e00104c))
 #define p1_chip_0_cfg   (*((volatile unsigned long *)0x7e001200))
-#define MEM_SYS_CFG     (*((volatile unsigned long *)0x7e00f120))
+//#define MEM_SYS_CFG     (*((volatile unsigned long *)0x7e00f120))
 
 /*NAND FLASH*/
-#define MEM_SYS_CFG     (*((volatile unsigned long *)0x7e00f120))
-#define NFCONF          (*((volatile unsigned long *)0x70200000))
+#define MEM_SYS_CFG     0x7e00f120
+#define NFCONF          0x70200000
 
 #define TACLS           0
 #define TWRPH0          2 //1
 #define TWRPH1          1
 
-#define NFCONT          (*((volatile unsigned long *)0x70200004))
-#define NFCMMD          (*((volatile unsigned long *)0x70200008))
-#define NFADDR          (*((volatile unsigned long *)0x7020000c))
-#define NFDATA          (*((volatile unsigned char *)0x70200010))
+#define NFCONT          0x70200004
+#define NFCMMD          0x70200008
+#define NFADDR          0x7020000c
+#define NFDATA          0x70200010
 
-#define NFSTAT          (*((volatile unsigned long *)0x70200028))
+#define NFSTAT          0x70200028
 
 /*UART*/
-#define ULCON0          (*((volatile unsigned long *)0x7f005000))
-#define UCON0           (*((volatile unsigned long *)0x7f005004))
-#define UFCON0          (*((volatile unsigned long *)0x7f005008))
-#define UMCON0          (*((volatile unsigned long *)0x7f00500c))
-#define UBRDIV0         (*((volatile unsigned short *)0x7f005028))
-#define UDIVSLOT0       (*((volatile unsigned short *)0x7f00502C))
-#define UFSTAT0         (*((volatile unsigned long *)0x7f005018))
-#define URXH0           (*((volatile unsigned char *)0x7f005024))
-#define UTXH0           (*((volatile unsigned char *)0x7f005020))
+#define ULCON0          0x7f005000
+#define UCON0           0x7f005004
+#define UFCON0          0x7f005008
+#define UMCON0          0x7f00500c
+#define UBRDIV0         0x7f005028
+#define UDIVSLOT0       0x7f00502C
+#define UFSTAT0         0x7f005018
+#define URXH0           0x7f005024
+#define UTXH0           0x7f005020

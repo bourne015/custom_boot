@@ -1,9 +1,3 @@
-void putc(char);
-void puts(char *);
-void putmem(unsigned int);
-void led_run(void);
-int nand_read(unsigned int, unsigned int, unsigned int);
-
 #define MACH_TYPE_SMDK6410	1626
 #define LOAD_ADDR		0x5e000000
 #define LOAD_SIZE		0x500000

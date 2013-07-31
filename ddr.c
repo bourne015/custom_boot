@@ -54,7 +54,7 @@ void ddr_init(void)
 	P1DIRECTCMD = 0xa0000; //MRS
 	P1DIRECTCMD = 0x80032; //EMRS
 	
-	MEM_SYS_CFG = 0X0;
+	*(unsigned long *)MEM_SYS_CFG = 0X0;
 	
 	/*set DRAM to "ready" state*/
 	P1MEMCCMD = 0x000;

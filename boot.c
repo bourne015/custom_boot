@@ -1,6 +1,10 @@
 #include "common.h"
 #include "setup.h"
 
+void puts(char *);
+void putmem(unsigned int);
+int nand_read(unsigned int, unsigned int, unsigned int);
+
 static struct tag *params;
 
 static int strlen(char *p)
@@ -100,7 +104,7 @@ int start_armboot(void)
 	volatile unsigned int *p = (volatile unsigned int *)LOAD_ADDR;
 
 	/*copy kernel to ram*/
-	uart_init();
+//	uart_init();
 	puts("copying kernel to ram......");
 	nand_read(0x100000, LOAD_ADDR, LOAD_SIZE);
 	puts("done\n\r");
