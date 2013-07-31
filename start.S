@@ -15,6 +15,7 @@ _start:
 	/*lowlevel: clock, uart, nand*/
 	bl	lowlevel_init
 	ldr	sp, =8*1024
+#	bl	led_run
 	bl	ddr_init
 	
 	/*copy code to ram*/
@@ -25,7 +26,8 @@ _start:
 	cmp	r0, r1
 	beq	clean_bss
 	
-	bl	nand_read
+#	bl	nand_read
+	bl	led_run
 #	cmp	r0, #0
 #	beq	error
 
@@ -41,8 +43,8 @@ bss_loop:
 	bne	bss_loop
 
 after_copy:
-	ldr	lr, =error
+#	ldr	lr, =error
 	ldr	pc, =start_armboot
 
-error:
-	b	error
+###error:
+#	b	error

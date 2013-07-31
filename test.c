@@ -10,26 +10,35 @@ void delay2(void)
 void led_run(void)
 {
 	int i = 16;
+	unsigned long data;
 	unsigned long key = 0xeeeeee;
+	
+	data = SYSREG_R(GPMCON);
+	data &= ~0xffff;
+	data |= 0x1111;
+	SYSREG_W(GPMDAT, data);
 
-	GPMCON &= ~0xffff;
-	GPMCON |= 0x1111;
 	while (i--) {
+		SYSREG_W(GPMDAT, key);
 		key = key >> 1;
-		GPMDAT = key;
 		delay2();
 	}
 }
 
 void led(unsigned int x)
 {
-	GPMCON &= ~0xffff;
-	GPMCON |= 0x1111;
+	unsigned long data;
 
-	GPMDAT = x;
+	data = SYSREG_R(GPMCON);
+	data &= ~0xffff;
+	data |= 0x1111;
+	SYSREG_W(GPMDAT, data);
+
+	SYSREG_W(GPMDAT, x);
 }
-
+/*
 void test(void)
 {
 	puts("\n\rcustom uboot for ok6410\n\r");
 }
+*/
