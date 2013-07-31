@@ -4,14 +4,46 @@
 lowlevel_init:
 	mov	r12, lr
 	
+	/*LED on*/	
+	ldr	r0, =GPMCON
+	ldr	r1, =0x1111
+	str	r1, [r0]
+
+	ldr	r0, =GPMDAT
+	ldr	r1, =0x06
+	str	r1, [r0]
+
 	/*disable watchdog*/	
 	ldr	r0, =0x7e000000
 	orr	r0, r0, #4000
 	mov	r1, #0
 	str	r1, [r0]
+	
+	/* External interrupt pending clear */
+/*        ldr     r0, =EINTPEND
+        ldr     r1, [r0]
+        str     r1, [r0]
 
+        ldr     r0, =ELFIN_VIC0_BASE_ADDR       @0x71200000
+        ldr     r1, =ELFIN_VIC1_BASE_ADDR       @0x71300000
+*/
+        /* Disable all interrupts (VIC0 and VIC1) */
+#        mvn     r3, #0x0
+#        str     r3, [r0, #oINTMSK]
+#        str     r3, [r1, #oINTMSK]
+
+        /* Set all interrupts as IRQ */
+#        mov     r3, #0x0
+#        str     r3, [r0, #oINTMOD]
+#        str     r3, [r1, #oINTMOD]
+
+        /*Pending Interrupt Clear */
+/*        mov     r3, #0x0
+        str     r3, [r0, #oVECTADDR]
+        str     r3, [r1, #oVECTADDR]
+*/
 	bl	clock_init
-	bl	uart_init
+#	bl	uart_init
 	bl	nand_init
 
 	mov	lr, r12

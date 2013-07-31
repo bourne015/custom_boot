@@ -82,3 +82,11 @@
 #define UFSTAT0         0x7f005018
 #define URXH0           0x7f005024
 #define UTXH0           0x7f005020
+
+/*interrupt*/
+#define EINTPEND	0x7f008924
+#define ELFIN_VIC0_BASE_ADDR	0x71200000
+#define ELFIN_VIC1_BASE_ADDR	0x71300000
+#define oINTMSK		0x014
+#define oINTMOD		0x00c
+#define oVECTADDR	0xf00
