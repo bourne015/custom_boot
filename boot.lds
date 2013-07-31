@@ -8,6 +8,8 @@ SECTIONS
 
 	. = ALIGN(4);
 	.text : {
+		start.o (.text)
+		lowlevel_init.o (.text)
 		*(.text)
 	}
 
