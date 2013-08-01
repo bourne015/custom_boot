@@ -23,11 +23,11 @@ _start:
 	ldr	r1, =_start
 	ldr	r2, =bss_start
 	sub	r2, r2, r1
-	cmp	r0, r1
-	beq	clean_bss
+#	cmp	r0, r1
+#	beq	clean_bss
 	
-#	bl	nand_read
-	bl	led_run
+	bl	nand_read
+#	bl	led_run
 #	cmp	r0, #0
 #	beq	error
 

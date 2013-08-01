@@ -1,25 +1,25 @@
 #include "s3c6410.h"
-
+/*
 void nand_reset(void)
 {
 	unsigned long val;
-	/*enable chip select*/
+	//enable chip select
 	val = SYSREG_R(NFCONT);
 	val &= ~(1 << 1);
 	SYSREG_W(NFCONT, val);
 
-	/*reset*/
+	//reset
 	SYSREG_W(NFCMMD, 0xff);
 
-	/*wait nand ready to operw*/
+	//wait nand ready to operw
 	while ((SYSREG_R(NFSTAT) & 0x1) == 0);
 	
-	/*disenable chip select*/
+	//disenable chip select
 	val = SYSREG_R(NFCONT);
 	val |= (1 << 1);
 	SYSREG_W(NFCONT, val);
 }
-
+*/
 void nand_send_addr(unsigned int addr)
 {
 	/*1st cycle a0~a7*/

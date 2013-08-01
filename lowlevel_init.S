@@ -65,7 +65,7 @@ clock_init:
         str     r1, [r0]
 
 wait_for_async:
-        ldr     r0, =OTHERS
+#        ldr     r0, =OTHERS
         ldr     r1, [r0]
         and     r1, #0xf00
 	cmp     r1, #0x00
@@ -93,7 +93,7 @@ uart_init:
 	/*set gpio to uart mode*/
 	ldr	r0, =GPACON
 	ldr	r1, [r0]
-	bic	r1, #0xff
+	bic	r1, r1, #0xff
 	orr	r1, r1, #0x22
 	str	r1, [r0]
 
@@ -155,7 +155,7 @@ nand_init:
 	 *nand reset
 	 *enable chip select
 	 */
-	ldr	r0, =NFCONT
+#	ldr	r0, =NFCONT
 	ldr	r1, [r0]
 	bic	r1, #0x2
 	ldr	r1, [r0]
