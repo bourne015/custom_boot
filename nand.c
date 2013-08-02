@@ -44,7 +44,7 @@ void nand_send_addr(unsigned int addr)
 	NFADDR = ((addr >> 28) & 0x7);
 }
 
-void 
+int 
 nand_read(unsigned int nand_start, unsigned int ddr_start, unsigned int len)
 {
 	unsigned int addr = nand_start;
@@ -62,30 +62,19 @@ nand_read(unsigned int nand_start, unsigned int ddr_start, unsigned int len)
 
 		for (i = 0; i < 4096 && count < len; i++) {
 			data = NFDATA;
-			/*for the 1st 4*4K, just used 2K each*/
-		/*	if(addr < 16384) {
-				if(i < 2048)
-					dest[count++] = data;
-			} else
-		*/
-				dest[count++] = data;
+			dest[count++] = data;
 		}
 		addr += 4096;
 	}
 
 	NFCONT |= (1 << 1);
-
-//	return 0;
+	
+	return 0;
 }
 
-int 
+void 
 nand2ddr(unsigned int nand, unsigned int ddr, unsigned int len)
 {
-//	int ret;
-
 	nand_init();
-
 	nand_read(nand, ddr, len);
-
-//	return ret;
 }
