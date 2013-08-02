@@ -1,6 +1,7 @@
 #include "common.h"
 #include "setup.h"
 
+void uart_init(void);
 static struct tag *params;
 
 static int strlen(char *p)
@@ -98,7 +99,9 @@ int do_bootm_linux(void)
 	char *commandline = CMDLINE;
 	void (*kernel_entry)(int zero, int arch, unsigned int params);
 	volatile unsigned int *p = (volatile unsigned int *)LOAD_ADDR;
-
+	
+	led_run();
+	uart_init();
 	/*copy kernel to ram*/
 	puts("copying kernel to ram......");
 	nand_read(0x100000, LOAD_ADDR, LOAD_SIZE);
