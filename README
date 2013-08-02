@@ -1,6 +1,13 @@
 a simple custom bootloader for ok6410
 author: fantao
-2012.12.5
+2013.8.3
+
+finaly, it should boot again on ok6410(both 2g nand and 4g nand) 
+
+to flash u-boot:
+	loadb 50008000 	//for kermit
+	nand erase 0 100000
+	nand write 50008000 0 100000
 
 the kernel flashed at 0x100000 in nand, the size is 5M, then we copy it 
 to 0x5e000000(LOAD_ADDR) in ram.
