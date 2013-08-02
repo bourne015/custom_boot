@@ -4,10 +4,14 @@ ENTRY(_start)
 
 SECTIONS
 {
-	. = 0x5f000000;
+	. = 0x55000000;
 
 	. = ALIGN(4);
 	.text : {
+		start.o (.text)
+		clock.o (.text)
+		ddr.o (.text)
+		nand.o (.text)
 		*(.text)
 	}
 
