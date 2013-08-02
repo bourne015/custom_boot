@@ -1,6 +1,6 @@
-objs = start.o clock.o uart.o ddr.o nand.o test.o boot.o
+objs = start.o clock.o uart.o ddr.o nand.o boot.o test.o
 CC := arm-linux-gcc
-CFLAGS := -fno-builtin -Wall
+CFLAGS := -fno-builtin -Wall -nostdlib
 
 boot.bin:$(objs)
 	arm-linux-ld -Tboot.lds -o boot.elf $^
