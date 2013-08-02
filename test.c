@@ -20,7 +20,7 @@ void led_run(void)
 		delay2();
 	}
 }
-
+/*
 void led(unsigned int x)
 {
 	GPMCON &= ~0xffff;
@@ -33,3 +33,4 @@ void test(void)
 {
 	puts("\n\rcustom uboot for ok6410\n\r");
 }
+*/

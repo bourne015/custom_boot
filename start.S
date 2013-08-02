@@ -14,7 +14,7 @@ _start:
 	/*lowlevel init*/
 	ldr	sp, =8*1024
 	bl	clock_init
-	bl	uart_init
+	#bl	uart_init
 	bl	ddr_init
 	
 	/*copy code to ram*/
@@ -22,28 +22,41 @@ _start:
 	ldr	r1, =_start
 	ldr	r2, =bss_start
 	sub	r2, r2, r1
-	cmp	r0, r1
-	beq	clean_bss
+#	cmp	r0, r1
+#	beq	clean_bss
 	
 	bl	nand2ddr
-	bl	test
-	cmp	r0, #0
-	beq	error
+	ldr	r0, =0x7f008820
+	ldr	r1, =0x1111
+	str	r1, [r0]
+
+	ldr	r0, =0x7f008824
+	ldr	r1, =0xd
+	str	r1, [r0]
+#	cmp	r0, #0
+#	beq	error
 
 clean_bss:
 	ldr	r0, =bss_start
 	ldr	r1, =bss_end
-	ldr	r2, =0x0
+	mov	r2, #0x0
 	cmp	r0, r1
 	beq	after_copy
 bss_loop:
-	str	r1, [r0], #4
+	str	r2, [r0], #4
 	cmp	r0, r1
-	bne	bss_loop
+	ble	bss_loop
 
 after_copy:
-	ldr	lr, =error
+#	ldr	lr, =error
+	ldr	r0, =0x7f008820
+	ldr	r1, =0x1111
+	str	r1, [r0]
+
+	ldr	r0, =0x7f008824
+	ldr	r1, =0x9
+	str	r1, [r0]
 	ldr	pc, =do_bootm_linux
 
-error:
-	b	error
+##error:
+#	b	error
