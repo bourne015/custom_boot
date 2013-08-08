@@ -1,4 +1,4 @@
-objs = start.o clock.o uart.o ddr.o nand.o boot.o test.o
+objs = start.o clock.o uart.o ddr.o nand.o boot.o test.o lcd.o
 CC := arm-linux-gcc
 CFLAGS := -fno-builtin -Wall -nostdlib
 
