@@ -1,12 +1,12 @@
-#define SYSREG_R(reg) (*(volatile unsigned long *)reg)
-#define SYSREG_W(reg, val) (*(volatile unsigned long *)reg = val)
+#define sysreg_r(reg) (*(volatile unsigned long *)reg)
+#define sysreg_w(reg, val) (*(volatile unsigned long *)reg = val)
 
 #define GPBCON	0x7f008020
 #define GPBDAT	0x7f008024
 #define GPICON	0x7f008100
 #define GPJCON	0x7f008120
 #define GPECON	0x7f008080
-#define GPEDAT	0x7f008080
+#define GPEDAT	0x7f008084
 #define GPFCON	0x7f0080a0
 #define GPFDAT	0x7f0080a4
 #define GPPCON  0x7f008160
@@ -20,7 +20,7 @@
 #define VIDTCON0	0x77100010
 #define VIDTCON1	0x77100014
 #define VIDTCON2	0x77100018
-#define WINCON0		0x77100024
+#define WINCON0		0x77100020
 #define VIDOSD0A	0x77100040
 #define VIDOSD0B	0x77100044
 #define VIDOSD0C	0x77100048
@@ -41,10 +41,10 @@
 
 #define LEFTTOP_X 0
 #define LEFTTOP_Y 0
-#define RIGHTBOT_X 271
-#define RIGHTBOT_Y 479
+#define RIGHTBOT_X 491
+#define RIGHTBOT_Y 271
 
-#define FRAME_BUFFER 0x57000000
+#define FRAME_BUFFER 0x58000000
 
 void puts(char *);
 
@@ -52,89 +52,87 @@ void lcd_init(void)
 {
 	unsigned long val;
 
-	SYSREG_W(GPJCON, 0xaaaaaa);
-	SYSREG_W(GPICON, 0xaaaaaaaa);
+	sysreg_w(GPJCON, 0xaaaaaaa);
+	sysreg_w(GPICON, 0xaaaaaaaa);
 
-	val = SYSREG_R(GPFCON);
+	val = sysreg_r(GPFCON);
 	val &= ~(0x3 << 28);
 	val |= (0x1 << 28);
-	SYSREG_W(GPFCON, val);
+	sysreg_w(GPFCON, val);
 
-	val = SYSREG_R(GPECON);
+	val = sysreg_r(GPECON);
 	val &= ~(0xf);
 	val |= (0x1);
-	SYSREG_W(GPECON, val);
+	sysreg_w(GPECON, val);
 
-	val = SYSREG_R(GPBCON);
-	val &= ~(0xf << 24);
-	val |= (0x1 << 24);
-	SYSREG_W(GPECON, val);
-
-	val = SYSREG_R(SPCON);
+	val = sysreg_r(SPCON);
 	val &= ~(0x3);
 	val |= 0x1;
-	SYSREG_W(SPCON, val);
+	sysreg_w(SPCON, val);
 
-	val = SYSREG_R(VIDCON0);
+	val = sysreg_r(VIDCON0);
 	val &= ~((0x3 << 26) | (0x3 << 17) | (0xff << 6) |
 		(0x3 << 2) | (0x3));
 	
-	val |= (0x1 << 4);
-	SYSREG_W(VIDCON0, val);
+	val |= (0x1 << 4) | (7 << 6);
+	sysreg_w(VIDCON0, val);
 
-	SYSREG_W(MIFPCON, 0x0);
+	val = sysreg_r(MIFPCON);
+	val &= ~(0x1 << 3);
+	sysreg_w(MIFPCON, val);
 
-	val = SYSREG_R(VIDCON1);
-	val &= ~((0x1 << 5) | (0x1) << 6);
-	val |= (0x1 << 4) | (0x1 << 7);
-	SYSREG_W(VIDCON1, val);
+	val = sysreg_r(VIDCON1);
+	val |= ((0x1 << 5) | (0x1 << 6));
+	val &= ~((0x1 << 4) | (0x1 << 7));
+	sysreg_w(VIDCON1, val);
 
 	val = (VSPW | (VFPD << 8) | (VBPD << 16));
-	SYSREG_W(VIDTCON0, val);
+	sysreg_w(VIDTCON0, val);
 
 	val = (HSPW | (HFPD << 8) | (HBPD << 16));
-	SYSREG_W(VIDTCON1, val);
+	sysreg_w(VIDTCON1, val);
 
 	val = (HOZVAL | (LINEVAL << 11));
-	SYSREG_W(VIDTCON2, val);
+	sysreg_w(VIDTCON2, val);
 
-	val = SYSREG_R(WINCON0);
+	val = sysreg_r(WINCON0);
 	val &= ~(0xf << 2);
-	val |= (0xf << 2) | 0x1;
+	val |= (0xb << 2) | 0x1;
 
 	val = (LEFTTOP_Y | (LEFTTOP_X << 11));
-	SYSREG_W(VIDOSD0A, val);
+	sysreg_w(VIDOSD0A, val);
 
-	val = (RIGHTBOT_Y | (RIGHTBOT_X << 11));
-	SYSREG_W(VIDOSD0B, val);
+	val = ((RIGHTBOT_Y+1) | ((RIGHTBOT_X+1) << 11));
+	sysreg_w(VIDOSD0B, val);
 
-	val = LINEVAL * HOZVAL;
-	SYSREG_W(VIDOSD0C, val);
+	val = (LINEVAL+1) * (HOZVAL+1);
+	sysreg_w(VIDOSD0C, val);
 
 	val = FRAME_BUFFER;
-	SYSREG_W(VIDW00ADD0B0, val);
+	sysreg_w(VIDW00ADD0B0, val);
 
-	val = FRAME_BUFFER + ((HOZVAL+1) * (LINEVAL+1));
-	SYSREG_W(VIDW00ADD1B0, val);
+	val = (FRAME_BUFFER & 0xffffff) + ((HOZVAL+1) * (LINEVAL+1));
+	//val = (((HOZVAL+1)*4) * (LINEVAL+1)) & 0xffffff;
+	sysreg_w(VIDW00ADD1B0, val);
 
 	val = HOZVAL+1;
-	SYSREG_W(VIDW00ADD2, val);
+	sysreg_w(VIDW00ADD2, val);
 }
 
 void backlight_enable(void)
 {
 	unsigned long val;
-	val = SYSREG_R(GPFDAT);
+	val = sysreg_r(GPFDAT);
 	val |= (1<<14);
-	SYSREG_W(GPFDAT, val);
+	sysreg_w(GPFDAT, val);
 }
 
 void backlight_disable(void)
 {
 	unsigned long val;
-	val = SYSREG_R(GPFDAT);
+	val = sysreg_r(GPFDAT);
 	val &= ~(1<<14);
-	SYSREG_W(GPFDAT, val);
+	sysreg_w(GPFDAT, val);
 }
 
 
@@ -142,59 +140,51 @@ void lcd_on(void)
 {
 	unsigned long val;
 	/* 等待10 frame */
-	val = SYSREG_R(GPEDAT);
+	val = sysreg_r(GPEDAT);
 	val |= (1);
-	SYSREG_W(GPEDAT, val);
-
-	val = SYSREG_R(GPBDAT);
-	val |= (1 << 6);
-	SYSREG_W(GPBDAT, val);
+	sysreg_w(GPEDAT, val);
 }
 
 void lcd_off(void)
 {
 	unsigned long val;
-	val = SYSREG_R(GPEDAT);
+	val = sysreg_r(GPEDAT);
 	val &= ~(1 << 0);
-	SYSREG_W(GPEDAT, val);
+	sysreg_w(GPEDAT, val);
 }
 
-void displaycon_on(void)
+void display_on(void)
 {
 	unsigned long val;
 
-	val = SYSREG_R(VIDCON0);
+	val = sysreg_r(VIDCON0);
 	val |= (0x3);
-	SYSREG_W(VIDCON0, val);
+	sysreg_w(VIDCON0, val);
 
-	val = SYSREG_R(VIDCON0);
+	val = sysreg_r(WINCON0);
 	val |= (0x1);
-	SYSREG_W(WINCON0, val);
+	sysreg_w(WINCON0, val);
 }
 
-void displaycon_off(void)
+void display_off(void)
 {
 	unsigned long val;
 
-	val = SYSREG_R(VIDCON0);
+	val = sysreg_r(VIDCON0);
 	val &= ~(0x3);
-	SYSREG_W(VIDCON0, val);
+	sysreg_w(VIDCON0, val);
 
-	val = SYSREG_R(VIDCON0);
+	val = sysreg_r(VIDCON0);
 	val &= ~(0x1);
-	SYSREG_W(WINCON0, val);
+	sysreg_w(WINCON0, val);
 }
 
 void lcd_enable(void)
 {
-	/* 使能LCD本身 */
 	lcd_on();
-
-	/* 打开背光 */
 	backlight_enable();
-
-	/* 使能display controller */
-	displaycon_on();
+	/*display controller */
+	display_on();
 }
 
 void lcd_disable(void)
@@ -203,36 +193,22 @@ void lcd_disable(void)
 /* 关闭LCD本身 */
 /* 关闭display controller */
 }
-/*
-void draw_line(void)
-{
-	DrawLine(0,0, 0,271, 0xff0000);
-	DrawLine(0,0, 479,0, 0x00ff00);
-	DrawLine(0,0, 479,271, 0x0000ff);
-	DrawLine(0,271, 479,0, 0x00ffff);
-	DrawLine(0,271, 479,271, 0xff00ff);
-	DrawLine(479,271, 479,0, 0xffff00);
-	DrawLine(0,136, 479,136, 0x0123ff);
-	DrawLine(240,0, 240,271, 0x0567ff);
-}
-*/
+
 void display_red(void)
 {
-	volatile unsigned long *p = (volatile unsigned long *)FRAME_BUFFER;
+	volatile unsigned long **p = (volatile unsigned long *)FRAME_BUFFER;
 	int x, y;
-	int cnt = 0;
+	//int cnt = 0;
 	unsigned long colors[] = {0xff0000, 0x00ff00, 0x0000ff, 0, 0xffffff};
+	//unsigned long colors[] = {0x10ddff, 0x00ff00, 0x0000ff, 0, 0xffffff};
 	static int color_idx = 0;
 
-	for (y = 0; y <= LINEVAL; y++) {
-		for (x = 0; x <= HOZVAL; x++) {
-			p[cnt++] =colors[color_idx] ; /* red */
+	for (y = 1; y <= LINEVAL; y++) {
+		for (x = 1; x <= HOZVAL; x++) {
+			//p[cnt++] =colors[color_idx] ; /* red */
+			p[y][x] =colors[color_idx] ; /* blue */
 		}
 	}
-
-	color_idx++;
-	if (color_idx == 5)
-		color_idx = 0;
 }
 
 
