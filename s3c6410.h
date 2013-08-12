@@ -1,6 +1,12 @@
 /*GPIO ADDRESS for OK6410*/
 #define GPACON  	(*((volatile unsigned long *)0x7f008000))
 #define GPADAT          (*((volatile unsigned long *)0x7f008004))
+#define GPECON 		(*((volatile unsigned long *)0x7F008080))
+#define GPEDAT 		(*((volatile unsigned long *)0x7F008084))
+#define GPFCON 		(*((volatile unsigned long *)0x7F0080a0))
+#define GPFDAT 		(*((volatile unsigned long *)0x7F0080a4))
+#define GPICON 		(*((volatile unsigned long *)0x7F008100))
+#define GPJCON 		(*((volatile unsigned long *)0x7F008120))
 #define GPMCON  	(*((volatile unsigned long *)0x7F008820))
 #define GPMDAT 		(*((volatile unsigned long *)0x7F008824))
 
@@ -76,3 +82,22 @@
 #define UFSTAT0         (*((volatile unsigned long *)0x7f005018))
 #define URXH0           (*((volatile unsigned char *)0x7f005024))
 #define UTXH0           (*((volatile unsigned char *)0x7f005020))
+
+/*LCD*/
+#define SPCON   	(*((volatile unsigned long *)0x7f0081a0))
+#define MIFPCON 	(*((volatile unsigned long *)0x7410800c))
+
+#define VIDCON0         (*((volatile unsigned long *)0x77100000))
+#define VIDCON1         (*((volatile unsigned long *)0x77100004))
+#define VIDCON2         (*((volatile unsigned long *)0x77100008))
+#define VIDTCON0        (*((volatile unsigned long *)0x77100010))
+#define VIDTCON1        (*((volatile unsigned long *)0x77100014))
+#define VIDTCON2        (*((volatile unsigned long *)0x77100018))
+#define WINCON0         (*((volatile unsigned long *)0x77100020))
+#define VIDOSD0A        (*((volatile unsigned long *)0x77100040))
+#define VIDOSD0B        (*((volatile unsigned long *)0x77100044))
+#define VIDOSD0C        (*((volatile unsigned long *)0x77100048))
+#define VIDW00ADD0B0    (*((volatile unsigned long *)0x771000a0))
+#define VIDW00ADD1B0    (*((volatile unsigned long *)0x771000d0))
+#define VIDW00ADD2      (*((volatile unsigned long *)0x77100100))
+
