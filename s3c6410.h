@@ -6,7 +6,9 @@
 #define GPFCON 		(*((volatile unsigned long *)0x7F0080a0))
 #define GPFDAT 		(*((volatile unsigned long *)0x7F0080a4))
 #define GPICON 		(*((volatile unsigned long *)0x7F008100))
+#define GPIPUD 		(*((volatile unsigned long *)0x7F008108))
 #define GPJCON 		(*((volatile unsigned long *)0x7F008120))
+#define GPJPUD 		(*((volatile unsigned long *)0x7F008128))
 #define GPMCON  	(*((volatile unsigned long *)0x7F008820))
 #define GPMDAT 		(*((volatile unsigned long *)0x7F008824))
 
@@ -100,4 +102,5 @@
 #define VIDW00ADD0B0    (*((volatile unsigned long *)0x771000a0))
 #define VIDW00ADD1B0    (*((volatile unsigned long *)0x771000d0))
 #define VIDW00ADD2      (*((volatile unsigned long *)0x77100100))
+#define DITHMODE        (*((volatile unsigned long *)0x77100170))
 

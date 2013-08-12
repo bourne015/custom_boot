@@ -1,40 +1,13 @@
-#define sysreg_r(reg) (*(volatile unsigned long *)reg)
-#define sysreg_w(reg, val) (*(volatile unsigned long *)reg = val)
+#include "s3c6410.h"
+#include "font_8x8.h"
 
-#define GPBCON	0x7f008020
-#define GPBDAT	0x7f008024
-#define GPICON	0x7f008100
-#define GPJCON	0x7f008120
-#define GPECON	0x7f008080
-#define GPEDAT	0x7f008084
-#define GPFCON	0x7f0080a0
-#define GPFDAT	0x7f0080a4
-#define GPPCON  0x7f008160
-
-#define SPCON	0x7f0081a0
-#define MIFPCON	0x7410800c
-
-#define VIDCON0		0x77100000
-#define VIDCON1		0x77100004
-#define VIDCON2		0x77100008
-#define VIDTCON0	0x77100010
-#define VIDTCON1	0x77100014
-#define VIDTCON2	0x77100018
-#define WINCON0		0x77100020
-#define VIDOSD0A	0x77100040
-#define VIDOSD0B	0x77100044
-#define VIDOSD0C	0x77100048
-#define VIDW00ADD0B0	0x771000a0
-#define VIDW00ADD1B0	0x771000d0
-#define VIDW00ADD2	0x77100100
-
-#define VBPD	1
-#define VFPD	1
+#define VBPD	2
+#define VFPD	2
 #define VSPW	10
 
 #define HBPD	2	
 #define HFPD	2
-#define HSPW	41
+#define HSPW	40
 
 #define LINEVAL 271
 #define HOZVAL	479
@@ -44,139 +17,89 @@
 #define RIGHTBOT_X 491
 #define RIGHTBOT_Y 271
 
-#define FRAME_BUFFER 0x58000000
+#define FRAME_BUFFER 0x57000000
 
 void puts(char *);
+void putc(char);
+char getc(void);
 
 void lcd_init(void)
 {
-	unsigned long val;
+	GPICON = 0xaaaaaaaa;
+	GPIPUD = 0x00000000;
+	GPJCON = 0xaaaaaa;
+	GPJPUD = 0x00000000;
 
-	sysreg_w(GPJCON, 0xaaaaaaa);
-	sysreg_w(GPICON, 0xaaaaaaaa);
+	GPFCON &= ~(0x3 << 28);
+	GPFCON |= (0x1 << 28);
 
-	val = sysreg_r(GPFCON);
-	val &= ~(0x3 << 28);
-	val |= (0x1 << 28);
-	sysreg_w(GPFCON, val);
+	GPECON &= ~(0xf);
+	GPECON |= (0x1);
 
-	val = sysreg_r(GPECON);
-	val &= ~(0xf);
-	val |= (0x1);
-	sysreg_w(GPECON, val);
+	MIFPCON &= ~(0x1 << 3);
 
-	val = sysreg_r(SPCON);
-	val &= ~(0x3);
-	val |= 0x1;
-	sysreg_w(SPCON, val);
+	SPCON &= ~(0x3);
+	SPCON |= 0x1;
 
-	val = sysreg_r(VIDCON0);
-	val &= ~((0x3 << 26) | (0x3 << 17) | (0xff << 6) |
-		(0x3 << 2) | (0x3));
-	
-	val |= (0x1 << 4) | (7 << 6);
-	sysreg_w(VIDCON0, val);
+	VIDCON0 &= ~((0x3<<26) | (0x3<<17) | (0xff<<6) | (0x3<<2));
+	VIDCON0 |= (2<<6) | (1<<4) | (0x3);
 
-	val = sysreg_r(MIFPCON);
-	val &= ~(0x1 << 3);
-	sysreg_w(MIFPCON, val);
+	VIDCON1 |= ((0x1 << 5) | (3 << 6));
+	VIDCON1 &= ~(0x1 << 7);
 
-	val = sysreg_r(VIDCON1);
-	val |= ((0x1 << 5) | (0x1 << 6));
-	val &= ~((0x1 << 4) | (0x1 << 7));
-	sysreg_w(VIDCON1, val);
+	VIDTCON0 = ((VBPD << 16) | (VFPD << 8) | VSPW);
+	VIDTCON1 = ((HBPD << 16) | (HFPD << 8) | HSPW);
+	VIDTCON2 = ((LINEVAL << 11) | HOZVAL);
 
-	val = (VSPW | (VFPD << 8) | (VBPD << 16));
-	sysreg_w(VIDTCON0, val);
+	WINCON0 &= ~(0xf << 2);
+	WINCON0 |= (0xb << 2);
 
-	val = (HSPW | (HFPD << 8) | (HBPD << 16));
-	sysreg_w(VIDTCON1, val);
+	VIDOSD0A = ((LEFTTOP_X << 11) | LEFTTOP_Y);
 
-	val = (HOZVAL | (LINEVAL << 11));
-	sysreg_w(VIDTCON2, val);
+	VIDOSD0B = (((RIGHTBOT_X) << 11) | RIGHTBOT_Y);
 
-	val = sysreg_r(WINCON0);
-	val &= ~(0xf << 2);
-	val |= (0xb << 2) | 0x1;
+	VIDOSD0C = ((LINEVAL+1) * (HOZVAL+1)) & 0xffffff;
 
-	val = (LEFTTOP_Y | (LEFTTOP_X << 11));
-	sysreg_w(VIDOSD0A, val);
+	VIDW00ADD0B0 = ((FRAME_BUFFER>>24)<<24) | (FRAME_BUFFER&0xffffff);
 
-	val = ((RIGHTBOT_Y+1) | ((RIGHTBOT_X+1) << 11));
-	sysreg_w(VIDOSD0B, val);
+	VIDW00ADD1B0 = (((HOZVAL+1)*4) * (LINEVAL+1)) & 0xffffff;
 
-	val = (LINEVAL+1) * (HOZVAL+1);
-	sysreg_w(VIDOSD0C, val);
+	VIDW00ADD2 = (HOZVAL+1);
 
-	val = FRAME_BUFFER;
-	sysreg_w(VIDW00ADD0B0, val);
-
-	val = (FRAME_BUFFER & 0xffffff) + ((HOZVAL+1) * (LINEVAL+1));
-	//val = (((HOZVAL+1)*4) * (LINEVAL+1)) & 0xffffff;
-	sysreg_w(VIDW00ADD1B0, val);
-
-	val = HOZVAL+1;
-	sysreg_w(VIDW00ADD2, val);
+	DITHMODE = (1<<5) | (1<<3) | (1<<1)|(0x1);
 }
 
 void backlight_enable(void)
 {
-	unsigned long val;
-	val = sysreg_r(GPFDAT);
-	val |= (1<<14);
-	sysreg_w(GPFDAT, val);
+	GPFDAT |= (1<<14);
 }
 
 void backlight_disable(void)
 {
-	unsigned long val;
-	val = sysreg_r(GPFDAT);
-	val &= ~(1<<14);
-	sysreg_w(GPFDAT, val);
+	GPFDAT &= ~(1<<14);
 }
 
 
 void lcd_on(void)
 {
-	unsigned long val;
-	/* 等待10 frame */
-	val = sysreg_r(GPEDAT);
-	val |= (1);
-	sysreg_w(GPEDAT, val);
+	GPEDAT |= (1);
 }
 
 void lcd_off(void)
 {
-	unsigned long val;
-	val = sysreg_r(GPEDAT);
-	val &= ~(1 << 0);
-	sysreg_w(GPEDAT, val);
+	GPEDAT &= ~(1);
 }
 
 void display_on(void)
 {
-	unsigned long val;
-
-	val = sysreg_r(VIDCON0);
-	val |= (0x3);
-	sysreg_w(VIDCON0, val);
-
-	val = sysreg_r(WINCON0);
-	val |= (0x1);
-	sysreg_w(WINCON0, val);
+	VIDCON0 |= (0x3);
+	WINCON0 |= (0x1);
 }
 
 void display_off(void)
 {
-	unsigned long val;
-
-	val = sysreg_r(VIDCON0);
-	val &= ~(0x3);
-	sysreg_w(VIDCON0, val);
-
-	val = sysreg_r(VIDCON0);
-	val &= ~(0x1);
-	sysreg_w(WINCON0, val);
+	VIDCON0 &= ~(0x3);
+	WINCON0 &= ~(0x1);
 }
 
 void lcd_enable(void)
@@ -189,35 +112,118 @@ void lcd_enable(void)
 
 void lcd_disable(void)
 {
-/* 关闭背光 */
-/* 关闭LCD本身 */
-/* 关闭display controller */
+	backlight_disable();
+	lcd_off();
+	/*display controller */
+	display_off();
 }
 
-void display_red(void)
+void full_color(const unsigned long color)
 {
-	volatile unsigned long **p = (volatile unsigned long *)FRAME_BUFFER;
+	volatile unsigned long *p = (volatile unsigned long *)FRAME_BUFFER;
 	int x, y;
-	//int cnt = 0;
-	unsigned long colors[] = {0xff0000, 0x00ff00, 0x0000ff, 0, 0xffffff};
-	//unsigned long colors[] = {0x10ddff, 0x00ff00, 0x0000ff, 0, 0xffffff};
-	static int color_idx = 0;
+	int cnt = 0;
 
-	for (y = 1; y <= LINEVAL; y++) {
-		for (x = 1; x <= HOZVAL; x++) {
-			//p[cnt++] =colors[color_idx] ; /* red */
-			p[y][x] =colors[color_idx] ; /* blue */
+	for (y = 0; y <= LINEVAL; y++) {
+		for (x = 0; x <= HOZVAL; x++) {
+			p[cnt++] = color;
 		}
 	}
 }
 
 
+void draw(int x, int y, const unsigned long data)
+{
+	volatile unsigned long *addr;
+
+	addr = (volatile unsigned long *)(FRAME_BUFFER)+(y*HOZVAL) + x;
+	*addr = data;
+}
+
+void lcd_putc(int x, int y, const unsigned char c)
+{
+	int i, j;
+	unsigned char line_dot;
+	const unsigned char *dot = fontdata_8x8 + c*8;
+	
+	for (i = 0; i < 8; i++) {
+		line_dot = dot[i];
+		for (j = 0; j < 8; j++) {
+			if (line_dot & (0x80 >> j))
+				draw(x+j, y+i, 0xff0000);
+			else
+				draw(x+j, y+i, 0x0);
+		}
+	}
+}
+	
+void handle(char cho)
+{
+	char c;
+
+	switch (cho) {
+	case '1':
+		puts("full red");
+		full_color(0xdd0000);
+		break;
+	case '2':
+		puts("full green");
+		full_color(0x00dd00);
+		break;
+	case '3':
+		puts("full blue");
+		full_color(0x0000dd);
+		break;
+	case '6':
+		backlight_enable();
+		break;
+	case '7':
+		backlight_disable();
+		break;
+	case '8':
+		display_on();
+		break;
+	case '9':
+		display_off();
+		break;
+	case '0':
+		full_color(0x0);
+		break;
+	case 'a':
+		puts("\n\rinput char:");
+		c = getc();
+		lcd_putc(50, 50, c);
+		full_color(0xffffff);
+		break;
+	default:
+		puts("wrong choice!\n\r");
+		break;
+	}
+}
+void menu(void)
+{
+	char cho;
+	while (1) {
+		puts("\n\r");
+		puts("\t   TEST LCD\n\r");
+		puts("\t1. full screen red\n\r");
+		puts("\t2. full screen green\n\r");
+		puts("\t3. full screen blue\n\r");
+		puts("\t6. backlight on\n\r");
+		puts("\t7. backlight off\n\r");
+		puts("\t8. display on\n\r");
+		puts("\t9. display off\n\r");
+		puts("\t0. clean screen\n\r");
+		puts("\ta. putc in screen\n\r");
+		puts("your chooice: ");
+		cho = getc();
+		handle(cho);
+		putc(cho);
+	}
+}
 void lcd_test(void)
 {
-	puts("\n\r");
-	puts("\ttest lcd\n\r");
-
 	lcd_init();
 	lcd_enable();
-	display_red();
+	menu();
 }
