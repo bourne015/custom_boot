@@ -17,11 +17,11 @@
 #define RIGHTBOT_X 491
 #define RIGHTBOT_Y 271
 
-#define FRAME_BUFFER 0x57000000
-
 void puts(char *);
 void putc(char);
 char getc(void);
+
+volatile static unsigned long lcd_buffer[LINEVAL+1][HOZVAL+1];
 
 void lcd_init(void)
 {
@@ -60,11 +60,12 @@ void lcd_init(void)
 
 	VIDOSD0C = ((LINEVAL+1) * (HOZVAL+1)) & 0xffffff;
 
-	VIDW00ADD0B0 = ((FRAME_BUFFER>>24)<<24) | (FRAME_BUFFER&0xffffff);
+	VIDW00ADD0B0 = (unsigned long)lcd_buffer;
 
-	VIDW00ADD1B0 = (((HOZVAL+1)*4) * (LINEVAL+1)) & 0xffffff;
+	VIDW00ADD1B0 = (((HOZVAL+1)*4)*(LINEVAL+1)+
+			(unsigned long)lcd_buffer) & 0xffffff;
 
-	VIDW00ADD2 = (HOZVAL+1);
+	VIDW00ADD2 = (HOZVAL+1)*4;
 
 	DITHMODE = (1<<5) | (1<<3) | (1<<1)|(0x1);
 }
@@ -120,13 +121,11 @@ void lcd_disable(void)
 
 void full_color(const unsigned long color)
 {
-	volatile unsigned long *p = (volatile unsigned long *)FRAME_BUFFER;
 	int x, y;
-	int cnt = 0;
 
 	for (y = 0; y <= LINEVAL; y++) {
 		for (x = 0; x <= HOZVAL; x++) {
-			p[cnt++] = color;
+			lcd_buffer[y][x] = color;
 		}
 	}
 }
@@ -134,29 +133,27 @@ void full_color(const unsigned long color)
 
 void draw(int x, int y, const unsigned long data)
 {
-	volatile unsigned long *addr;
-
-	addr = (volatile unsigned long *)(FRAME_BUFFER)+(y*HOZVAL) + x;
-	*addr = data;
+	if ((x < 479) && (y < 272))
+		lcd_buffer[y][x] = data;
 }
 
 void lcd_putc(int x, int y, const unsigned char c)
 {
 	int i, j;
 	unsigned char line_dot;
-	const unsigned char *dot = fontdata_8x8 + c*8;
+	int num = (c-32)*8;
 	
 	for (i = 0; i < 8; i++) {
-		line_dot = dot[i];
+		line_dot = fontdata_8x8[num+i] & 0xff;
 		for (j = 0; j < 8; j++) {
 			if (line_dot & (0x80 >> j))
 				draw(x+j, y+i, 0xff0000);
 			else
-				draw(x+j, y+i, 0x0);
+				draw(x+j, y+i, 0xffffff);
 		}
 	}
 }
-	
+
 void handle(char cho)
 {
 	char c;
@@ -192,8 +189,7 @@ void handle(char cho)
 	case 'a':
 		puts("\n\rinput char:");
 		c = getc();
-		lcd_putc(50, 50, c);
-		full_color(0xffffff);
+		lcd_putc(100, 100, c);
 		break;
 	default:
 		puts("wrong choice!\n\r");
