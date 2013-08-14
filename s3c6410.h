@@ -116,3 +116,15 @@
 #define VIC1INTENABLE	(*((volatile unsigned long *)0x71300010))
 #define VIC1INTENCLEAR	(*((volatile unsigned long *)0x71300014))
 #define VIC1ADDRESS	(*((volatile unsigned long *)0x71300f00))
+#define VIC1VECTADDR30  (*((volatile unsigned long *)0x71300178))
+#define VIC1VECTADDR31  (*((volatile unsigned long *)0x7130017c))
+
+/*ADC & touch sreen*/
+#define ADCCON		(*((volatile unsigned long *)0x7e00b000))
+#define ADCTSC		(*((volatile unsigned long *)0x7e00b004))
+#define ADCDLY		(*((volatile unsigned long *)0x7e00b008))
+#define ADCDAT0		(*((volatile unsigned long *)0x7e00b00C))
+#define ADCDAT1		(*((volatile unsigned long *)0x7e00b010))
+#define ADCUPDN		(*((volatile unsigned long *)0x7e00b014))
+#define ADCCLRINT	(*((volatile unsigned long *)0x7e00b018))
+#define ADCCLRINTPNDNUP	(*((volatile unsigned long *)0x7e00b020))
