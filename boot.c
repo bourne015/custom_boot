@@ -104,6 +104,7 @@ int do_bootm_linux(void)
 	uart_init();
 	/*copy kernel to ram*/
 	puts("start copy kernel to ram......");
+	touch_test();
 	lcd_test();
 	nand_read(0x100000, LOAD_ADDR, LOAD_SIZE);
 	puts("done\n\r");

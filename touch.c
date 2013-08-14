@@ -43,4 +43,5 @@ void touch_test(void)
 
 	VIC1VECTADDR30 = int_pen_up_down;
 	VIC1VECTADDR31 = int_adc;
+	VIC1INTENABLE |= (1<<31) | (1<<30);
 }
