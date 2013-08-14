@@ -11,6 +11,12 @@
 #define GPJPUD 		(*((volatile unsigned long *)0x7F008128))
 #define GPMCON  	(*((volatile unsigned long *)0x7F008820))
 #define GPMDAT 		(*((volatile unsigned long *)0x7F008824))
+#define GPNCON          (*((volatile unsigned long *)0x7f008830))
+#define GPNDAT          (*((volatile unsigned long *)0x7f008834))
+
+#define EINT0CON0       (*((volatile unsigned long *)0x7f008900))
+#define EINT0MASK       (*((volatile unsigned long *)0x7f008920))
+#define EINT0PEND       (*((volatile unsigned long *)0x7f008924))
 
 /*CLOCK*/
 #define APLL_LOCK       (*((volatile unsigned long *)0x7e00f000))
@@ -110,6 +116,8 @@
 #define VIC0INTENABLE	(*((volatile unsigned long *)0x71200010))
 #define VIC0INTENCLEAR	(*((volatile unsigned long *)0x71200014))
 #define VIC0ADDRESS	(*((volatile unsigned long *)0x71200f00))
+#define VIC0VECTADDR0	(*((volatile unsigned long *)0x71200100))
+#define VIC0VECTADDR1	(*((volatile unsigned long *)0x71200104))
 
 #define VIC1IRQSTATUS	(*((volatile unsigned long *)0x71300000))
 #define VIC1INTSELECT	(*((volatile unsigned long *)0x7130000c))

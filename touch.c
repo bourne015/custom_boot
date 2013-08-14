@@ -1,5 +1,7 @@
 #include "s3c6410.h"
 
+void puts(char *);
+
 void touch_init(void)
 {
 	/*pclk:66Mhz, AD freq:2Mhz*/
