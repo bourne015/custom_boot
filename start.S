@@ -1,6 +1,23 @@
 .global _start
 
 _start:
+	bl	reset
+	ldr	pc, =reserve
+	ldr	pc, =reserve
+	ldr	pc, =reserve
+	ldr	pc, =reserve
+	ldr	pc, =reserve
+	ldr	pc, =irq
+	ldr	pc, =reserve
+
+irq:	
+	ldr	sp, =54000000
+	sub	lr, lr, #0x04
+	stmdb	sp!, {r0-r12, lr}
+	ldr	pc, =do_irq
+	ldmia	sp!, {r0-r12, pc}
+		
+reset:
 	/*peripheral port setup*/
 	ldr	r0, =0x70000000
 	orr	r0, r0, #0x13
@@ -21,8 +38,6 @@ _start:
 	ldr	r1, =_start
 	ldr	r2, =bss_start
 	sub	r2, r2, r1
-	cmp	r0, r1
-	beq	clean_bss
 	
 	bl	nand2ddr
 
@@ -30,8 +45,6 @@ clean_bss:
 	ldr	r0, =bss_start
 	ldr	r1, =bss_end
 	mov	r2, #0x0
-	cmp	r0, r1
-	beq	after_copy
 bss_loop:
 	str	r2, [r0], #4
 	cmp	r0, r1
@@ -39,3 +52,6 @@ bss_loop:
 
 after_copy:
 	ldr	pc, =do_bootm_linux
+
+reserve:
+	b	reserve

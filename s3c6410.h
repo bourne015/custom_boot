@@ -104,3 +104,15 @@
 #define VIDW00ADD2      (*((volatile unsigned long *)0x77100100))
 #define DITHMODE        (*((volatile unsigned long *)0x77100170))
 
+/*interrupt*/
+#define VIC0IRQSTATUS	(*((volatile unsigned long *)0x71200000))
+#define VIC0INTSELECT	(*((volatile unsigned long *)0x7120000c))
+#define VIC0INTENABLE	(*((volatile unsigned long *)0x71200010))
+#define VIC0INTENCLEAR	(*((volatile unsigned long *)0x71200014))
+#define VIC0ADDRESS	(*((volatile unsigned long *)0x71200f00))
+
+#define VIC1IRQSTATUS	(*((volatile unsigned long *)0x71300000))
+#define VIC1INTSELECT	(*((volatile unsigned long *)0x7130000c))
+#define VIC1INTENABLE	(*((volatile unsigned long *)0x71300010))
+#define VIC1INTENCLEAR	(*((volatile unsigned long *)0x71300014))
+#define VIC1ADDRESS	(*((volatile unsigned long *)0x71300f00))

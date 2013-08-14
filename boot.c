@@ -100,6 +100,7 @@ int do_bootm_linux(void)
 	void (*kernel_entry)(int zero, int arch, unsigned int params);
 	volatile unsigned int *p = (volatile unsigned int *)LOAD_ADDR;
 	
+	enable_interrupts();
 	uart_init();
 	/*copy kernel to ram*/
 	puts("start copy kernel to ram......");
