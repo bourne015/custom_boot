@@ -24,6 +24,6 @@ void do_irq(void)
 		irq_isr = VIC1ADDRESS;
 		irq_isr();
 
-		VIC0ADDRESS = 0;
+		VIC1ADDRESS = 0;
 	}
 }
