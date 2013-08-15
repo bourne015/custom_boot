@@ -24,6 +24,7 @@ void led_run(void)
 void key0_4_irq(void)
 {
         int i;
+
         GPMCON &= ~(0xffff);
         GPMCON |= 0x1111;
 
@@ -35,6 +36,7 @@ void key0_4_irq(void)
                                 GPMDAT |= (1 << i);
                 }
         }
+	EINT0PEND = 0x3f;
 }
 
 void key5_6_irq(void)
@@ -52,6 +54,7 @@ void key5_6_irq(void)
                                 GPMDAT = 0x0;
                 }
         }
+	EINT0PEND = 0x3f;
 }
 
 void key_irq_init()

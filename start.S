@@ -7,15 +7,18 @@ _start:
 	ldr	pc, =reserve
 	ldr	pc, =reserve
 	ldr	pc, =reserve
-	ldr	pc, =irq
+	ldr	pc, _irq
 	ldr	pc, =reserve
 
-irq:	
-	ldr	sp, =54000000
-	sub	lr, lr, #0x04
+_irq:
+	.word	vector_irq
+
+vector_irq:	
+	ldr	sp, =0x54000000
+	sub	lr, lr, #4
 	stmdb	sp!, {r0-r12, lr}
-	ldr	pc, =do_irq
-	ldmia	sp!, {r0-r12, pc}
+	bl	do_irq
+	ldmia	sp!, {r0-r12, pc}^
 		
 reset:
 	/*peripheral port setup*/
