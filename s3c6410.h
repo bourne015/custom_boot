@@ -143,3 +143,7 @@
 #define ADCUPDN		(*((volatile unsigned long *)0x7e00b014))
 #define ADCCLRINT	(*((volatile unsigned long *)0x7e00b018))
 #define ADCCLRINTPNDNUP	(*((volatile unsigned long *)0x7e00b020))
+
+/*dm9000*/
+#define SROM_BW		(*((volatile unsigned long *)0x70000000))
+#define SROM_BC1	(*((volatile unsigned long *)0x70000008))
