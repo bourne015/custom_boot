@@ -177,11 +177,9 @@ void handle(char cho)
 	case '7':
 		backlight_disable();
 		break;
-	case '8':
-		display_on();
-		break;
-	case '9':
-		display_off();
+	case '+':
+	case '-':
+		backlight_change(cho);
 		break;
 	case '0':
 		full_color(0x0);
@@ -207,8 +205,8 @@ void menu(void)
 		puts("\t3. full screen blue\n\r");
 		puts("\t6. backlight on\n\r");
 		puts("\t7. backlight off\n\r");
-		puts("\t8. display on\n\r");
-		puts("\t9. display off\n\r");
+		puts("\t[+]. backlight increase\n\r");
+		puts("\t[-]. backlight decrease\n\r");
 		puts("\t0. clean screen\n\r");
 		puts("\ta. putc in screen\n\r");
 		puts("your chooice: ");

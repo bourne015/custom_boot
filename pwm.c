@@ -1,6 +1,6 @@
 #include "s3c6410.h"
 
-void pwm_init(void)
+void pwm_init(int light_val)
 {
 	/*just pwm 0*/
 	GPFCON &= ~(0x3<<28);
@@ -18,17 +18,51 @@ void pwm_init(void)
 	TCON |= (1<<3)
 
 	TCNTB0 = 33000;
-	TCMPB0 = 33000;
+	if (light_val) {
+		TCMPB0 = 33000/light_val;
+	} else{
+		TCMPB0 = 33000;
+	}
+
+	pwm_start();
 }
 
 void pwm_start(void)
 {
+	/*invert on*/
 	TCON0 |= (0x1<<1);
+	/*start timer0*/
 	TCON0 |= 0x1;
+	/*clean manual update bit*/
 	TCON0 &= ~(0x1<<1);
 }
 
 void pwm_stop(void)
 {
 	TCON0 &= ~(0x1);
+}
+
+int backlight_change(char c)
+{
+	static int cnt = 5;
+	int light_val;
+
+	if (c == '+') {
+		light_val = 100/cnt;
+		pwm_init(light_val);
+		cnt += 5;
+		if (cnt > 100)
+			cnt = 100;
+	} else if (c == '-') {
+		light_val = 100/cnt;
+		pwm_init(light_val);
+		cnt -= 5;
+		if (cnt < 5)
+			cnt = 5;
+	} else {
+		printf("Usage: input '+' or '-'")'
+		return -1;
+	}
+
+	return 0;
 }
