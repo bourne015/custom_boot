@@ -127,6 +127,13 @@
 #define VIC1VECTADDR30  (*((volatile unsigned long *)0x71300178))
 #define VIC1VECTADDR31  (*((volatile unsigned long *)0x7130017c))
 
+/*PWM*/
+#define TCFG0		(*((volatile unsigned long *)0x7f006000))
+#define TCFG1		(*((volatile unsigned long *)0x7f006004))
+#define TCON		(*((volatile unsigned long *)0x7f006008))
+#define TCNTB0		(*((volatile unsigned long *)0x7f00600c))
+#define TCMPB0		(*((volatile unsigned long *)0x7f006010))
+
 /*ADC & touch sreen*/
 #define ADCCON		(*((volatile unsigned long *)0x7e00b000))
 #define ADCTSC		(*((volatile unsigned long *)0x7e00b004))
