@@ -2,7 +2,7 @@
 
 void pwm_init(int light_val)
 {
-	/*just pwm 0*/
+	/*just time 0*/
 	GPFCON &= ~(0x3<<28);
 	GPFCON |= (0x2<<28);
 
@@ -14,8 +14,8 @@ void pwm_init(int light_val)
 	TCFG1 &= ~(0xf);
 
 	/*auto reloader*/
-	TCON &= ~(0x1f);
-	TCON |= (1<<3)
+//	TCON &= ~(0x1f);
+	TCON |= (1<<3);
 
 	TCNTB0 = 33000;
 	if (light_val) {
