@@ -92,8 +92,30 @@ static int dm9000_send(volatile void *packet, int length)
 static int dm9000_rx(volatile void *packet)
 {
 	int length = 0;
+	
+	/*check if we received packet*/
+	if (!(dm9000_ior(ISR) & 0x1))
+		return 0;
+	
+	/*clear latched status*/
+	dm9000_iow(ISR, 0x1);
+	rx = dm9000_inb(DM9000_DATA) & 0x3;
+
+	if (rx > 0x1) {
+		return 0;
+	}
+
+	if (rx != 0x1)
+		return 0;
 
 	
+	while (1) {
+		/*dummy read, read out last data 
+		 *of read command
+		 */
+		dm9000_ior(MRCMDX);
+		
+	}
 	return 0;
 }
 
