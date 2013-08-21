@@ -1,5 +1,5 @@
 objs = start.o clock.o uart.o ddr.o nand.o boot.o lcd.o \
-	interrupts.o touch.o test.o lib/libc.a pwm.o
+	interrupts.o touch.o test.o pwm.o lib/libc.a
 CC := arm-linux-gcc
 AR := arm-linux-ar
 
