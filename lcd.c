@@ -154,6 +154,17 @@ void lcd_putc(int x, int y, const unsigned char c)
 	}
 }
 
+void lcd_puts(int x, int y, const unsigned char *str)
+{
+	int i, j;
+
+	for (j = y; j < LINEVAL; j +=8) {
+		for (i = x; i < HOZVAL; i += 8) {
+			lcd_putc(i, j, *str++);
+		}
+	}
+}
+
 void handle(char cho)
 {
 	char c;
