@@ -1,10 +1,12 @@
+#include <stdio.h>
 #include "s3c6410.h"
 #include "dm9000.h"
+#include <common.h>
 
-#define dm9000_outb(val, addr)	(*(unsigned char *)addr = val)
-#define dm9000_inb(addr)	(*(unsigned char *)addr)
-#define dm9000_outw(val, addr)	(*(u16 *)addr = val)
-#define dm9000_inw(addr)	(*(u16 *)addr)
+#define dm9000_outb(val, addr)	(*(unsigned char *)(addr) = (val))
+#define dm9000_inb(addr)	(*(unsigned char *)(addr))
+#define dm9000_outw(val, addr)	(*(u16 *)(addr) = (val))
+#define dm9000_inw(addr)	(*(u16 *)(addr))
 
 void dm9000_iow(int reg, unsigned char val)
 {
@@ -12,7 +14,7 @@ void dm9000_iow(int reg, unsigned char val)
 	dm9000_outb(val, DM9000_DATA);
 }
 
-void dm9000_ior(int reg)
+static unsigned char dm9000_ior(int reg)
 {
 	dm9000_outb(reg, DM9000_IO);
 	
@@ -22,24 +24,24 @@ void dm9000_ior(int reg)
 void dm9000_reset(void)
 {
 	/*step 1: power internal phy*/
-	dm9000_iow(GPR, 0x0)
+	dm9000_iow(GPR, 0x0);
 
 	/*stdp 2: software reset*/
-	dm9000_iow(NCR, (NCR_LBK | NCR_RST));
+	dm9000_iow(NCR, ((1<<1) | (1<<0)));
 	do {
-		udelay(25);
+		mdelay(1);
 	} while (dm9000_ior(NCR) & 1);
 	dm9000_iow(NCR, 0x0);
 
-	dm9000_iow(NCR, (NCR_LBK | NCR_RST));
+	dm9000_iow(NCR, ((1<<1) | (1<<0)));
 	do {
-		udelay(25);
+		mdelay(1);
 	} while (dm9000_ior(NCR) & 1);
 }
 
-void dm9000_probe(void)
+static int dm9000_probe(void)
 {
-	unsigned long in_val;
+	unsigned long id_val;
 	int i;
 	
 	/*try multiple times, codes from kernel*/
@@ -75,12 +77,12 @@ static int dm9000_send(volatile void *packet, int length)
 	/*push data to the tx-fifo*/
 	count = (length + 1)>>2;
 	for (i = 0; i < count; i++)
-		dm9000_outw((u16 *)packet[i], DM9000_DATA);
+		dm9000_outw(((u16 *)packet)[i], DM9000_DATA);
 	
 	dm9000_iow(TCR, 0x1);
 	/*set tx length*/
 	dm9000_iow(TXPLL, length & 0xff);
-	dm9000_iow(TXPLH, (length>>8) & 0xff)
+	dm9000_iow(TXPLH, (length>>8) & 0xff);
 	
 	/*wait for end of transmission*/
 	while (!(dm9000_ior(NSR) & ((1<<3) | (1<<2))));
@@ -92,7 +94,8 @@ static int dm9000_send(volatile void *packet, int length)
 
 static int dm9000_rx(volatile void *packet)
 {
-	int rx_len, rx_status, tmlen;
+	int rx_len, rx_status, tmplen;
+	int rx;
 	int i = 0;
 	
 	/*check if we received packet*/
@@ -115,9 +118,9 @@ static int dm9000_rx(volatile void *packet)
 	rx_status = dm9000_inw(DM9000_DATA);
 	rx_len = dm9000_inw(DM9000_DATA);
 
-	tmlen = (rx_len + 1) >> 1;
-	for (i = 0; i <  tmlen; i++)
-		packet[i] = dm9000_inw(DM9000_DATA);	
+	tmplen = (rx_len + 1) >> 1;
+	for (i = 0; i <  tmplen; i++)
+		((u16 *)packet)[i] = dm9000_inw(DM9000_DATA);	
 
 	return 0;
 }
@@ -143,7 +146,7 @@ static int dm9000_init(void)
 	*/
 	dm9000_iow(IMR, (1<<7));
 	/*rx enable*/
-	dm9000_iow(RCR, ((1<<5) | (1<<4) (1<<0)))
+	dm9000_iow(RCR, ((1<<5) | (1<<4) | (1<<0)));
 
 	/*read mac address*/
 	for (i = 0; i < 6; i++) {

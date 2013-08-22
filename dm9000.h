@@ -9,6 +9,12 @@
 #define RSR	0x06
 #define PAR	0x10
 #define GPR	0x1f
+#define VIDL	0x28
+#define VIDH	0x29
+#define PIDH	0x2b
+#define PIDL	0x2a
+#define MRCMDX	0xf0
+#define MWCMD	0xf8
 #define TXPLL	0xFC
 #define TXPLH	0xFd
 #define ISR	0xfe
