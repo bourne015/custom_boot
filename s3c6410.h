@@ -118,6 +118,7 @@
 #define VIC0ADDRESS	(*((volatile unsigned long *)0x71200f00))
 #define VIC0VECTADDR0	(*((volatile unsigned long *)0x71200100))
 #define VIC0VECTADDR1	(*((volatile unsigned long *)0x71200104))
+#define VIC0VECTADDR25	(*((volatile unsigned long *)(0x71200100+25*4)))
 
 #define VIC1IRQSTATUS	(*((volatile unsigned long *)0x71300000))
 #define VIC1INTSELECT	(*((volatile unsigned long *)0x7130000c))
@@ -127,12 +128,14 @@
 #define VIC1VECTADDR30  (*((volatile unsigned long *)0x71300178))
 #define VIC1VECTADDR31  (*((volatile unsigned long *)0x7130017c))
 
-/*PWM*/
+/*PWM & timer*/
 #define TCFG0		(*((volatile unsigned long *)0x7f006000))
 #define TCFG1		(*((volatile unsigned long *)0x7f006004))
 #define TCON		(*((volatile unsigned long *)0x7f006008))
 #define TCNTB0		(*((volatile unsigned long *)0x7f00600c))
 #define TCMPB0		(*((volatile unsigned long *)0x7f006010))
+#define TCNTB2		(*((volatile unsigned long *)0x7f006024))
+#define TINT_STAT	(*((volatile unsigned long *)0x7f006044))
 
 /*ADC & touch sreen*/
 #define ADCCON		(*((volatile unsigned long *)0x7e00b000))
